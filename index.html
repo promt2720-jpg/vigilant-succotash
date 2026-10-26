@@ -2,137 +2,87 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>LUCKY CASINO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOCAL AI - В браузере</title>
 <style>
-  *{box-sizing:border-box}
-  body{margin:0;background:#0f0f1a;color:#fff;font-family:Arial;text-align:center}
-  header{padding:16px;background:linear-gradient(90deg,#f59e0b,#ef4444,#8b5cf6)}
-  h1{margin:0;font-size:24px}
-  #bal{font-size:26px;font-weight:bold;margin:6px;color:#fff}
-  #jack{font-size:14px;background:#000;padding:6px 12px;border-radius:20px;display:inline-block}
-  .tabs{display:flex;gap:8px;justify-content:center;margin:12px}
-  .tab{padding:11px 18px;border:none;border-radius:20px;background:#222;color:#fff;font-size:15px}
-  .tab.active{background:#f59e0b;color:#000;font-weight:bold}
-  .card{background:#1e1e2e;border:2px solid #333;border-radius:20px;padding:16px;margin:12px auto;max-width:360px}
-  .reels{display:flex;justify-content:center;gap:10px;background:#000;padding:14px;border-radius:14px;margin:12px 0;font-size:50px}
-  .reel{background:#fff;width:82px;height:82px;border-radius:12px;display:flex;align-items:center;justify-content:center}
-  .bets{display:flex;justify-content:center;gap:8px;margin:10px}
-  .bet{padding:9px 15px;background:#222;border:2px solid #444;color:#fff;border-radius:10px}
-  .bet.sel{background:#22c55e;color:#000;border-color:#22c55e;font-weight:bold}
-  .spin{width:100%;padding:15px;background:#f59e0b;border:none;border-radius:14px;font-size:18px;font-weight:bold}
-  .spin:active{transform:scale(.97)}
-  #msg{margin:10px;font-weight:bold;color:#fbbf24;min-height:22px}
-  .wheel{width:170px;height:170px;border-radius:50%;background:conic-gradient(#e11d48 0 30deg,#111 30deg 60deg,#e11d48 60deg 90deg,#111 90deg 120deg,#e11d48 120deg 150deg,#111 150deg 180deg,#e11d48 180deg 210deg,#111 210deg 240deg,#e11d48 240deg 270deg,#111 270deg 300deg,#e11d48 300deg 330deg,#111 330deg 360deg);margin:15px auto;border:5px solid gold;transition:transform 2s cubic-bezier(.1,.7,.3,1);position:relative}
-  .wheel:after{content:'★';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;color:#000;width:55px;height:55px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px}
-  .cbtn{padding:12px 16px;border:none;border-radius:12px;font-weight:bold}
-  .page{display:none}
-  .page.active{display:block}
-  #log{font-size:12px;color:#888;padding:10px;max-height:100px;overflow:auto}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial;background:#0a0a0a;color:#fff;height:100vh;display:flex;flex-direction:column}
+  header{padding:12px 16px;background:#111;border-bottom:1px solid #222;display:flex;justify-content:space-between;align-items:center}
+  header b{color:#FFD93B}
+  #status{font-size:12px;color:#aaa}
+  #chat{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+  .msg{max-width:85%;padding:12px 14px;border-radius:14px;line-height:1.5;font-size:15px;white-space:pre-wrap}
+  .user{align-self:flex-end;background:#FFD93B;color:#000;border-bottom-right-radius:4px}
+  .ai{align-self:flex-start;background:#1e1e1e;border-bottom-left-radius:4px}
+  .sys{align-self:center;background:#222;color:#888;font-size:12px;text-align:center}
+  #box{display:flex;gap:8px;padding:12px;background:#111;border-top:1px solid #222}
+  #inp{flex:1;padding:12px;border-radius:12px;border:1px solid #333;background:#1a1a1a;color:#fff;outline:none;font-size:15px}
+  button{padding:12px 18px;border:none;border-radius:12px;background:#FFD93B;font-weight:bold;cursor:pointer}
+  #loadBtn{background:#fff;color:#000}
+  select{background:#1a1a1a;color:#fff;border:1px solid #333;padding:8px;border-radius:8px}
 </style>
 </head>
 <body>
 <header>
-  <h1>🎰 LUCKY CASINO 🎰</h1>
-  <div id="bal">💰 1000</div>
-  <div id="jack">🏆 ДЖЕКПОТ: <span id="jackNum">10000</span></div>
+  <div><b>🧠 LOCAL AI</b> <span style="font-size:12px;color:#888">100% в браузере | без сервера</span></div>
+  <div id="status">Не загружен</div>
 </header>
-<div class="tabs">
-  <button class="tab active" onclick="tab('slots',this)">🎰 СЛОТЫ</button>
-  <button class="tab" onclick="tab('roulette',this)">🎡 РУЛЕТКА</button>
-  <button class="tab" onclick="tab('dice',this)">🎲 КУБИКИ</button>
+<div id="chat">
+  <div class="msg sys">👋 Это локальный ИИ. Модель работает прямо в твоём браузере.<br>Нажми "Загрузить модель" — первый раз качается ~1.5 ГБ, потом работает офлайн.<br>Ничего не уходит на сервер.</div>
+</div>
+<div style="padding:0 12px 8px;background:#111;display:flex;gap:8px;align-items:center">
+  <select id="model">
+    <option value="Llama-3.2-1B-Instruct-q4f16_1-MLC">Llama 3.2 1B - быстрая</option>
+    <option value="Llama-3.2-3B-Instruct-q4f16_1-MLC">Llama 3.2 3B - умнее</option>
+    <option value="Qwen2.5-1.5B-Instruct-q4f16_1-MLC">Qwen 2.5 1.5B - русская</option>
+    <option value="Phi-3.5-mini-instruct-q4f16_1-MLC">Phi-3.5 - логика</option>
+  </select>
+  <button id="loadBtn" onclick="loadAI()">📥 Загрузить модель</button>
+  <button onclick="clearChat()">🗑 Очистить</button>
+</div>
+<div id="box">
+  <input id="inp" placeholder="Спроси что угодно..." onkeydown="if(event.key=='Enter') send()">
+  <button onclick="send()">➤</button>
 </div>
 
-<div id="slots" class="page active">
-  <div class="card">
-    <div>Ставка: <b id="betTxt">50</b></div>
-    <div class="bets">
-      <button class="bet" onclick="setBet(10,this)">10</button>
-      <button class="bet sel" onclick="setBet(50,this)">50</button>
-      <button class="bet" onclick="setBet(100,this)">100</button>
-      <button class="bet" onclick="setBet(500,this)">500</button>
-    </div>
-    <div class="reels"><div class="reel" id="r1">🍒</div><div class="reel" id="r2">🍒</div><div class="reel" id="r3">🍒</div></div>
-    <button class="spin" onclick="spin()">🎰 КРУТИТЬ</button>
-    <div id="msg">Удачи!</div>
-    <div style="font-size:12px;color:#aaa;line-height:1.8">💎💎💎 = ДЖЕКПОТ<br>7️⃣7️⃣7️⃣ = x10 | 🍒🍒🍒 = x5<br>⭐⭐⭐ = x4 | Пара = x2</div>
-  </div>
-</div>
+<script type="module">
+import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
 
-<div id="roulette" class="page">
-  <div class="card">
-    <div class="wheel" id="wheel"></div>
-    <div class="bets">
-      <button class="cbtn" style="background:#e11d48;color:#fff" onclick="pick('red',this)">🔴 КРАСНОЕ x2</button>
-      <button class="cbtn" style="background:#000;color:#fff;border:1px solid #fff" onclick="pick('black',this)">⚫ ЧЁРНОЕ x2</button>
-      <button class="cbtn" style="background:#16a34a;color:#fff" onclick="pick('green',this)">🟢 x14</button>
-    </div>
-    <div class="bets"><button class="bet sel" onclick="setBet(50,this)">50</button><button class="bet" onclick="setBet(100,this)">100</button><button class="bet" onclick="setBet(500,this)">500</button></div>
-    <button class="spin" onclick="spinR()">🎡 КРУТИТЬ РУЛЕТКУ</button>
-    <div id="msg2">Выбери цвет</div>
-  </div>
-</div>
+let engine=null, history=[];
+const chatEl=document.getElementById('chat');
+const statusEl=document.getElementById('status');
 
-<div id="dice" class="page">
-  <div class="card">
-    <div style="font-size:90px" id="dice">🎲</div>
-    <div>Больше или меньше 7?</div>
-    <div class="bets"><button class="bet sel" onclick="setBet(50,this)">50</button><button class="bet" onclick="setBet(100,this)">100</button><button class="bet" onclick="setBet(200,this)">200</button></div>
-    <div class="bets">
-      <button class="cbtn" style="background:#16a34a" onclick="dice('low')">⬇ МЕНЬШЕ 7 x2</button>
-      <button class="cbtn" style="background:#e11d48" onclick="dice('high')">⬆ БОЛЬШЕ 7 x2</button>
-    </div>
-    <div id="msg3">Кидай!</div>
-  </div>
-</div>
-
-<div id="log"></div>
-<button onclick="resetGame()" style="background:#222;color:#fff;border:1px solid #555;padding:9px 16px;border-radius:10px;margin-bottom:20px">🔄 Сброс</button>
-
-<script>
-let bal=1000, bet=50, jack=10000, col='red';
-let sym=['💎','7️⃣','🍒','⭐','🍋','🔔','🍇'];
-function tab(id,el){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); document.getElementById(id).classList.add('active'); el.classList.add('active'); }
-function setBet(v,el){ bet=v; document.getElementById('betTxt').innerText=v; document.querySelectorAll('.bet').forEach(b=>b.classList.remove('sel')); el.classList.add('sel'); }
-function upd(){ document.getElementById('bal').innerText='💰 '+bal; document.getElementById('jackNum').innerText=jack; if(bal<=0){ alert('Банкрот! +1000'); bal=1000; upd(); } }
-function log(t){ document.getElementById('log').innerHTML=t+'<br>'+document.getElementById('log').innerHTML; }
-function spin(){
-  if(bal<bet) return alert('Нет монет');
-  bal-=bet; jack+=Math.floor(bet*0.3); upd();
-  let m=document.getElementById('msg'); m.innerText='Крутим...';
-  let iv=setInterval(()=>{ r1.innerText=sym[Math.random()*sym.length|0]; r2.innerText=sym[Math.random()*sym.length|0]; r3.innerText=sym[Math.random()*sym.length|0]; },80);
-  setTimeout(()=>{ clearInterval(iv);
-    let a=sym[Math.random()*sym.length|0], b=sym[Math.random()*sym.length|0], c=sym[Math.random()*sym.length|0];
-    r1.innerText=a; r2.innerText=b; r3.innerText=c;
-    let win=0;
-    if(a==b&&b==c){ if(a=='💎'){ win=jack; m.innerText='💥 ДЖЕКПОТ +'+win; jack=10000; } else if(a=='7️⃣') win=bet*10; else if(a=='🍒') win=bet*5; else win=bet*4; m.innerText='🎉 '+a+b+c+' +'+win; }
-    else if(a==b||b==c||a==c){ win=bet*2; m.innerText='✅ Пара +'+win; } else m.innerText='😢 Мимо';
-    bal+=win; if(win>0&&navigator.vibrate) navigator.vibrate(80); upd(); log('🎰 '+a+b+c+' '+(win>0?'+'+win:'-'+bet));
-  },900);
+function addMsg(text, cls){
+  let d=document.createElement('div'); d.className='msg '+cls; d.textContent=text; chatEl.appendChild(d); chatEl.scrollTop=chatEl.scrollHeight; return d;
 }
-function pick(c,el){ col=c; document.querySelectorAll('.cbtn').forEach(b=>b.style.opacity=.5); el.style.opacity=1; }
-function spinR(){
-  if(bal<bet) return alert('Нет монет');
-  bal-=bet; upd();
-  wheel.style.transform='rotate('+(Math.random()*360+1080)+'deg)';
-  setTimeout(()=>{ let r=Math.random(); let res=r<.45?'red':r<.9?'black':'green'; let em=res=='red'?'🔴':res=='black'?'⚫':'🟢'; let win=0;
-    if(res==col){ win=res=='green'?bet*14:bet*2; msg2.innerText='🎉 '+em+' ВЫИГРЫШ +'+win; } else msg2.innerText='😢 '+em+' мимо';
-    bal+=win; upd(); log('🎡 '+em+' '+(win>0?'+'+win:'-'+bet));
-  },2100);
+window.clearChat=()=>{ chatEl.innerHTML=''; history=[]; addMsg('Чат очищен','sys'); }
+
+window.loadAI=async ()=>{
+  let model=document.getElementById('model').value;
+  statusEl.innerText='⏳ Скачивание... 0%';
+  addMsg('Загружаю '+model+'... Это может занять 1-3 минуты первый раз.','sys');
+  try{
+    engine=await CreateMLCEngine(model, {
+      initProgressCallback:(p)=>{ statusEl.innerText='⏳ '+(p.progress*100).toFixed(0)+'% - '+p.text; }
+    });
+    statusEl.innerText='✅ Готов: '+model;
+    addMsg('✅ Модель загружена! Спрашивай что угодно.','sys');
+  }catch(e){ statusEl.innerText='❌ Ошибка: '+e.message; addMsg('Ошибка: '+e.message+'\nПопробуй другой браузер (Chrome) и VPN если модель не качается.','sys'); }
 }
-function dice(ch){
-  if(bal<bet) return alert('Нет монет');
-  bal-=bet; upd();
-  let d1=Math.random()*6+1|0, d2=Math.random()*6+1|0, s=d1+d2;
-  diceEl.innerText=['','⚀','⚁','⚂','⚃','⚄','⚅'][d1];
-  let diceEl=document.getElementById('dice');
-  setTimeout(()=>{ let win=0; let w=(ch=='high'&&s>7)||(ch=='low'&&s<7);
-    if(s==7){ msg3.innerText='Ровно 7 - возврат'; bal+=bet; } else if(w){ win=bet*2; msg3.innerText='🎉 '+s+' +'+win; } else msg3.innerText='😢 '+s+' мимо';
-    bal+=win; upd(); log('🎲 '+s+' '+(win>0?'+'+win:'-'+bet));
-  },400);
+
+window.send=async ()=>{
+  let inp=document.getElementById('inp'); let txt=inp.value.trim(); if(!txt) return; inp.value='';
+  addMsg(txt,'user');
+  if(!engine){ addMsg('Сначала нажми "Загрузить модель" ⬆','ai'); return; }
+  let aiDiv=addMsg('...','ai');
+  history.push({role:'user', content:txt});
+  try{
+    let chunks=await engine.chat.completions.create({messages:history, stream:true});
+    let full='';
+    for await (let c of chunks){ let delta=c.choices[0]?.delta?.content||''; full+=delta; aiDiv.textContent=full; chatEl.scrollTop=chatEl.scrollHeight; }
+    history.push({role:'assistant', content:full});
+  }catch(e){ aiDiv.textContent='Ошибка: '+e.message; }
 }
-function resetGame(){ bal=1000; jack=10000; upd(); }
-upd();
 </script>
 </body>
 </html>
